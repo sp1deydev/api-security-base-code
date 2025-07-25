@@ -1,0 +1,48 @@
+server:
+  port: 8003
+  servlet:
+    context-path: /tms-auth-service/api
+spring:
+  cache:
+    type: redis
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: be-tms
+  rabbitmq:
+    host: 103.188.83.162
+    port: 5672
+    username: thientdk
+    password: Qwertyu1@
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://103.188.83.162:5432/tms_user
+    username: thientdk
+    password: Qwertyu1@
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 25
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      schema: public
+  jpa:
+    generate-ddl: false
+    hibernate.ddl-auto: none
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc.batch_size: 1000
+        order_inserts: true
+        default_schema: public
+  data:
+    redis:
+      host: 103.188.83.162
+      port: 6379
+grpc:
+  server:
+    port: 6500
+
