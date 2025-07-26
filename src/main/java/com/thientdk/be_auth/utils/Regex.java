@@ -10,6 +10,6 @@ public class Regex {
 
     public final static String CAR_START_YEAR_REGEX = "[13][0-9]{3}";
 
-
+    public static final String SECURE_PASSWORD_VALIDATION = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^!&*()])[A-Za-z\\d@#$%^!&*()]{8,20}$";
 
 }

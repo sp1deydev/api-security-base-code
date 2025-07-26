@@ -30,19 +30,18 @@ public class SecurityConfiguration {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    CorsConfiguration configuration = new CorsConfiguration();
-//                    configuration.setAllowedOrigins(List.of("*"));
-//                    configuration.setAllowedMethods(List.of("*"));
-//                    configuration.setAllowedHeaders(List.of("*"));
-//                    return configuration;
-//                }))
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(List.of("*"));
+                    configuration.setAllowedMethods(List.of("*"));
+                    configuration.setAllowedHeaders(List.of("*"));
+                    return configuration;
+                }))
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-//                        .requestMatchers(systemPropertyConfiguration.getUrlWhiteList()).permitAll()
-//                        .anyRequest().authenticated()
+                        .requestMatchers(systemPropertyConfiguration.getUrlWhiteList()).permitAll()
+                        .anyRequest().authenticated()
                 );
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //        http.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));

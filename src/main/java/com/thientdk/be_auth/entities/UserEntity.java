@@ -26,4 +26,7 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    private Integer role;
 }

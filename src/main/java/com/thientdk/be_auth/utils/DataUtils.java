@@ -773,6 +773,16 @@ public class DataUtils {
         }
     }
 
+    public static boolean isSecurePassword(String str) {
+        if(isBlank(str)) {
+            return false;
+        }
+        String regex = Regex.SECURE_PASSWORD_VALIDATION;
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
+
     public static String getIpAddress(HttpServletRequest request) {
         if (request != null) {
             String remoteAddr = request.getHeader("X-FORWARDED-FOR");
