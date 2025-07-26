@@ -1,14 +1,14 @@
 server:
-  port: 8003
+  port: 8001
   servlet:
-    context-path: /tms-auth-service/api
+    context-path: /be-auth/api
 spring:
   cache:
     type: redis
   main:
     allow-bean-definition-overriding: true
   application:
-    name: be-tms
+    name: be-auth
   rabbitmq:
     host: 103.188.83.162
     port: 5672
@@ -45,4 +45,57 @@ spring:
 grpc:
   server:
     port: 6500
+jwt:
+  signerKey: "iaKQ2Ed0Lm8m3WK9ul4IvbUdA9GO8Es1FRjrVwlm/NeANnIaGNP0tQv1vUTb22mR"
+  expiration-time: 86400000
+system:
+  configurations:
+    cors:
+      allow-credentials: true
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowed-header:
+        - Authorization
+        - Origin
+        - Content-Type
+        - Accept
+        - Accept-Encoding
+        - Accept-Language
+        - Access-Control-Allow-Origin
+        - Access-Control-Allow-Headers
+        - Access-Control-Request-Method
+        - X-Requested-With
+        - X-Auth-Token
+        - X-Xsrf-Token
+        - Cache-Control
+        - Id-Token
+      exposed-header:
+        - X-Xsrf-Token
+      url-based-pattern-cors-configuration-source: '/**'
+      allowed-origin-pattern:
+        - http://localhost:3000
+        - http://localhost:4200
+        - http://localhost:5173
+        - https://localhost:5173
+        - http://localhost:5173/
+        - https://localhost:5173/
+        - http://localhost:63342
+    url-white-list:
+      - '/swagger-ui.html'
+      - '/swagger/*'
+      - '/swagger-ui/*'
+      - '/swagger/v3/api/docs'
+      - '/swagger/v3/api/docs/*'
+      - '/v3/api-docs'
+      - '/v3/api-docs/*'
+      - '/v1/health'
+      - '/v1/auth/**'
+
+
+
 
