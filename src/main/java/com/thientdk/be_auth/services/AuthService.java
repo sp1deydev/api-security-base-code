@@ -40,7 +40,7 @@ public class AuthService {
         //validate request
         validateLoginRequest(request);
 
-        log.info("[login] - login START with username {}", request.getUsername());
+        log.info("[login] - login START with username: {}", request.getUsername());
         UserEntity entity = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> {
                     log.info("[login] - user not found ERROR");
@@ -67,11 +67,12 @@ public class AuthService {
         //validate request
         this.validateSignupRequest(request);
 
-        log.info("[signup] - Signup START with username {}", request.getUsername());
+        log.info("[signup] - Signup START with username: {}", request.getUsername());
 
         Optional<UserEntity> entity = userRepository.findByUsername(request.getUsername());
 
         if (entity.isPresent()) {
+            log.info("[signup] - User is existed ERROR with username: {}", request.getUsername());
             throw new ApiException(ErrorCode.BAD_REQUEST, "User is existed!");
         }
 
