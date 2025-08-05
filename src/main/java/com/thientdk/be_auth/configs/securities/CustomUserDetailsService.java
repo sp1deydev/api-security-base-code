@@ -1,9 +1,11 @@
 package com.thientdk.be_auth.configs.securities;
 
 import com.thientdk.be_auth.entities.UserEntity;
+import com.thientdk.be_auth.enums.Role;
 import com.thientdk.be_auth.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +26,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserEntity entity = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found!"));
 
-        Set<GrantedAuthority> authorities = new HashSet<>();
+        Role role = Role.getRole(entity.getRole());
+
+        // Tạo authority từ enum
+        Set<GrantedAuthority> authorities = Set.of(
+                new SimpleGrantedAuthority("ROLE_" + role.getRole())
+        );
+
         return new org.springframework.security.core.userdetails.User(
                 entity.getUsername(),
                 entity.getPassword(),

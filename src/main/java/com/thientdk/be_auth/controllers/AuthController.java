@@ -6,6 +6,7 @@ import com.thientdk.be_auth.models.responses.TextResponse;
 import com.thientdk.be_auth.models.responses.UserResponse;
 import com.thientdk.be_auth.services.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,6 @@ public class AuthController {
     public TextResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
-
 
     @PostMapping("/signup")
     public UserResponse signup(@RequestBody SignupRequest request) {
