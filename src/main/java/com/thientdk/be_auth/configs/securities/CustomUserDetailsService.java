@@ -21,14 +21,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserEntity entity = userRepository.findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found!"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
         Role role = Role.getRole(entity.getRole());
 
-        // Tạo authority từ enum
         Set<GrantedAuthority> authorities = Set.of(
                 new SimpleGrantedAuthority("ROLE_" + role.getRole())
         );
@@ -39,7 +38,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 entity.getPassword(),
                 authorities
         );
-
     }
 
 }

@@ -16,7 +16,9 @@ public class UserController {
 
     private final UserService userService;
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    //TODO: Throw exception with authorization 401 and 403
+    //TODO: Login response
+//    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable String id) {
         return userService.getUser(id);
