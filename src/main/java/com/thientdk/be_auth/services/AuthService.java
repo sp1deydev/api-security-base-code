@@ -7,13 +7,14 @@ import com.thientdk.be_auth.entities.UserEntity;
 import com.thientdk.be_auth.enums.Role;
 import com.thientdk.be_auth.models.requests.LoginRequest;
 import com.thientdk.be_auth.models.requests.SignupRequest;
-import com.thientdk.be_auth.models.responses.TextResponse;
+import com.thientdk.be_auth.models.responses.LoginResponse;
 import com.thientdk.be_auth.models.responses.UserResponse;
 import com.thientdk.be_auth.repositories.UserRepository;
 import com.thientdk.be_auth.utils.DataUtils;
 import com.thientdk.be_auth.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,10 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
-    public TextResponse login(LoginRequest request) {
+    @Value("${jwt.expiration-time}")
+    private long jwtExpiration;
+
+    public LoginResponse login(LoginRequest request) {
 
         //validate request
         validateLoginRequest(request);
@@ -59,7 +63,12 @@ public class AuthService {
         String jwt = jwtUtils.generateToken(extraClaims, userDetails);
 
         log.info("[login] - login DONE");
-        return new TextResponse(jwt);
+
+        return LoginResponse.builder()
+                .accessToken(jwt)
+                .tokenType("Bearer")
+                .expiresIn(jwtExpiration)
+                .build();
     }
 
     public UserResponse signup(SignupRequest request) {

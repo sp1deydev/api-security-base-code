@@ -2,6 +2,7 @@ package com.thientdk.be_auth.controllers;
 
 import com.thientdk.be_auth.models.requests.LoginRequest;
 import com.thientdk.be_auth.models.requests.SignupRequest;
+import com.thientdk.be_auth.models.responses.LoginResponse;
 import com.thientdk.be_auth.models.responses.TextResponse;
 import com.thientdk.be_auth.models.responses.UserResponse;
 import com.thientdk.be_auth.services.AuthService;
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public TextResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
@@ -28,4 +29,6 @@ public class AuthController {
     public UserResponse signup(@RequestBody SignupRequest request) {
         return authService.signup(request);
     }
+
+    //todo: refresh token and introspect
 }
