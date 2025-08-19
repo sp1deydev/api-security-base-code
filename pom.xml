@@ -13,10 +13,10 @@
 	</parent>
 
 	<groupId>com.thientdk</groupId>
-	<artifactId>tms-inventory-service</artifactId>
+	<artifactId>api-security-base-code</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tms-inventory-service</name>
-	<description>Inventory service for TMS project</description>
+	<name>api-security-base-code</name>
+	<description>api base code for login</description>
 
 	<properties>
 		<java.version>21</java.version>

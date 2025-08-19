@@ -87,17 +87,20 @@ system:
         - http://localhost:63342
     url-white-list:
       - '/swagger-ui.html'
-      - '/swagger/*'
-      - '/swagger-ui/*'
+      - '/swagger/**'
+      - '/swagger-ui/**'
       - '/swagger/v3/api/docs'
-      - '/swagger/v3/api/docs/*'
+      - '/swagger/v3/api/docs/**'
       - '/v3/api-docs'
-      - '/v3/api-docs/*'
+      - '/v3/api-docs/**'
       - '/v1/health'
       - '/v1/auth/**'
 logging:
   level:
     org.springframework.security: DEBUG
+    org.springdoc: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.autoconfigure: INFO
 
 
 
