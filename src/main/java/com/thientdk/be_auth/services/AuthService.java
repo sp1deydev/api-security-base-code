@@ -5,6 +5,7 @@ import com.thientdk.be_auth.aop.exceptions.ErrorCode;
 import com.thientdk.be_auth.configs.securities.JwtUtils;
 import com.thientdk.be_auth.entities.UserEntity;
 import com.thientdk.be_auth.enums.Role;
+import com.thientdk.be_auth.enums.UserStatus;
 import com.thientdk.be_auth.models.requests.LoginRequest;
 import com.thientdk.be_auth.models.requests.SignupRequest;
 import com.thientdk.be_auth.models.responses.LoginResponse;
@@ -45,7 +46,7 @@ public class AuthService {
         validateLoginRequest(request);
 
         log.info("[login] - login START with username: {}", request.getUsername());
-        UserEntity entity = userRepository.findByUsername(request.getUsername())
+        UserEntity userEntity = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> {
                     log.info("[login] - user not found ERROR");
                     return new ApiException(ErrorCode.BAD_REQUEST, "User not found!");
@@ -55,10 +56,14 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
+        if (userEntity.getActive() != 1) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "User is disabled!");
+        }
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("id", entity.getId());
+        extraClaims.put("id", userEntity.getId());
         extraClaims.put("authorities", userDetails.getAuthorities());
         String jwt = jwtUtils.generateToken(extraClaims, userDetails);
 
@@ -89,6 +94,7 @@ public class AuthService {
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setActive(UserStatus.ACTIVE.getValue());
         newUser.setRole(Role.USER.getId());
         UserEntity savedUser = userRepository.save(newUser);
 
@@ -96,6 +102,7 @@ public class AuthService {
                 .id(savedUser.getId())
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
+                .active(savedUser.getActive())
                 .role(Role.USER.getRole())
                 .createdAt(savedUser.getCreatedAt())
                 .createdBy(savedUser.getCreatedBy())

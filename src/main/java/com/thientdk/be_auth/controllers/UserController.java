@@ -3,10 +3,9 @@ package com.thientdk.be_auth.controllers;
 import com.thientdk.be_auth.models.responses.UserResponse;
 import com.thientdk.be_auth.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/v1/users")
 @RestController
@@ -23,4 +22,14 @@ public class UserController {
         return userService.getUser(id);
     }
 
+    @GetMapping
+    public Page<UserResponse> getUsers(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "") String keySearch,
+            Pageable pageable
+
+    ) {
+        return userService.getUsers(page, size, keySearch, pageable);
+    }
 }
