@@ -10,6 +10,7 @@ public class UserMapper {
                 .id(userEntity.getId())
                 .username(userEntity.getUsername())
                 .email(userEntity.getEmail())
+                .active(userEntity.getActive())
                 .role(Role.getRole(userEntity.getRole()).getRole())
                 .createdAt(userEntity.getCreatedAt())
                 .updatedAt(userEntity.getUpdatedAt())

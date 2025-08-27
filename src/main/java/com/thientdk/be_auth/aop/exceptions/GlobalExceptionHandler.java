@@ -1,6 +1,7 @@
 package com.thientdk.be_auth.aop.exceptions;
 
 import com.thientdk.be_auth.models.responses.ErrorResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -35,9 +36,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(fallback.getHttpStatusCode()).body(response);
     }
 
+
+
     @ExceptionHandler(value = AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException exception,
                                                                        HttpServletRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(java.time.LocalDateTime.now());
+        errorResponse.setPath(request.getRequestURI());
+        errorResponse.setMethod(request.getMethod());
+        errorResponse.setError(HttpStatus.UNAUTHORIZED.name());
+        errorResponse.setCode(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setMessage(exception.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException exception,
+                                                                   HttpServletRequest request) {
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(java.time.LocalDateTime.now());
