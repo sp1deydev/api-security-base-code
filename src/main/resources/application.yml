@@ -95,12 +95,12 @@ system:
       - '/v3/api-docs/**'
       - '/v1/health'
       - '/v1/auth/**'
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springdoc: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.boot.autoconfigure: INFO
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springdoc: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.boot.autoconfigure: INFO
 
 
 

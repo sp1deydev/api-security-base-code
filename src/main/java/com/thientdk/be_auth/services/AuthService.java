@@ -36,44 +36,61 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final LoginAttemptService loginAttemptService;
+
 
     @Value("${jwt.expiration-time}")
     private long jwtExpiration;
 
-    public LoginResponse login(LoginRequest request) {
 
+    public LoginResponse login(LoginRequest request) {
         //validate request
         validateLoginRequest(request);
 
         log.info("[login] - login START with username: {}", request.getUsername());
-        UserEntity userEntity = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> {
-                    log.info("[login] - user not found ERROR");
-                    return new ApiException(ErrorCode.BAD_REQUEST, "User not found!");
-                });
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+        try {
+            UserEntity userEntity = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> {
+                        log.info("[login] - user not found ERROR");
+                        loginAttemptService.saveLoginAttempt(null, request.getUsername(), false, "User not found");
+                        return new ApiException(ErrorCode.BAD_REQUEST, "User not found!");
+                    });
 
-        if (userEntity.getActive() != 1) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "User is disabled!");
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+
+            if (userEntity.getActive() != 1) {
+                loginAttemptService.saveLoginAttempt(userEntity.getId(), request.getUsername(), false, "User is disabled");
+                log.info("[login] - user is disabled ERROR with username: {}", request.getUsername());
+                throw new ApiException(ErrorCode.BAD_REQUEST, "User is disabled!");
+            }
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            Map<String, Object> extraClaims = new HashMap<>();
+            extraClaims.put("id", userEntity.getId());
+            extraClaims.put("authorities", userDetails.getAuthorities());
+            String jwt = jwtUtils.generateToken(extraClaims, userDetails);
+
+            loginAttemptService.saveLoginAttempt(userEntity.getId(), request.getUsername(), true, null);
+
+            log.info("[login] - login DONE");
+
+            return LoginResponse.builder()
+                    .accessToken(jwt)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtExpiration)
+                    .build();
+
+        } catch (Exception e) {
+            loginAttemptService.saveLoginAttempt(null, request.getUsername(), false, e.getMessage());
+            throw e;
         }
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("id", userEntity.getId());
-        extraClaims.put("authorities", userDetails.getAuthorities());
-        String jwt = jwtUtils.generateToken(extraClaims, userDetails);
-
-        log.info("[login] - login DONE");
-
-        return LoginResponse.builder()
-                .accessToken(jwt)
-                .tokenType("Bearer")
-                .expiresIn(jwtExpiration)
-                .build();
     }
 
     public UserResponse signup(SignupRequest request) {
@@ -141,4 +158,6 @@ public class AuthService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "Email is invalid!");
         }
     }
+
+
 }
